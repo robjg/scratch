@@ -19,21 +19,27 @@ class TypeUtilsTest {
             return Integer::parseInt;
         }
 
+        public Function<String, Double> stringToDouble() {
+            return Double::parseDouble;
+        }
+
         public void needsStringToInt(Function<? super String, ? extends Integer> func) {
         }
     }
 
-
     @Test
     void convertAssumptions() throws NoSuchMethodException {
 
-        final Type retType = ThingWithFunctions.class.getDeclaredMethod("stringToInt")
+        final Type retType1 = ThingWithFunctions.class.getDeclaredMethod("stringToInt")
+                .getGenericReturnType();
+        final Type retType2 = ThingWithFunctions.class.getDeclaredMethod("stringToDouble")
                 .getGenericReturnType();
 
         final Type paraType = ThingWithFunctions.class.getDeclaredMethod("needsStringToInt", Function.class)
                 .getGenericParameterTypes()[0];
 
-        assertThat(TypeUtils.isAssignable(retType, paraType), is(true));
+        assertThat(TypeUtils.isAssignable(retType1, paraType), is(true));
+        assertThat(TypeUtils.isAssignable(retType2, paraType), is(false));
     }
 
 }
